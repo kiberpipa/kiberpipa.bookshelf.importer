@@ -48,10 +48,13 @@ def do_import():
                               Book.Publisher, 
                               Book.Topic, 
                               Book.Year, 
-                              Book.Filename, 
+                              Book.OpenLibraryID,
+                              Book.Filename,
+                              Book.Extension,
+                              Book.Filesize,
                               Book.Coverurl):
 
-        solr_document = { "id" : book.MD5, "title" : book.Title, "language" : book.Language }
+        solr_document = { "id" : book.MD5, "title" : book.Title, "language" : book.Language, "extension": book.Extension }
 
         authors = [author.strip() for author in book.Author.split(",") if len(author.strip()) > 0]
         if authors:
@@ -62,6 +65,12 @@ def do_import():
 
         if book.Pages and book.Pages.isdigit():
             solr_document["pages"] = book.Pages
+
+        if book.OpenLibraryID:
+            solr_document["openlibrary_id"] = book.OpenLibraryID
+
+        if book.Filesize:
+            solr_document["filesize"] = book.Filesize
 
         solr_document["full_text"] = " ".join([book.VolumeInfo, book.Series, book.Periodical, book.Publisher, book.Topic])
         solr_document["file_url"] = book.Filename
